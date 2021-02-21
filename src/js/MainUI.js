@@ -4,6 +4,7 @@ import {
   FormatPainterOutlined,
   ApartmentOutlined,
   SaveOutlined,
+  CloseOutlined,
 } from '@ant-design/icons';
 
 import Output from './Output';
@@ -13,6 +14,9 @@ const MainUI = () => {
   const [tab, setTab] = useState('input');
   const [inputs, setInputs] = useState([]);
   const [outputs, setOutputs] = useState([]);
+  const [savedInputs, setSavedInputs] = useState(
+    JSON.parse(window.localStorage.getItem('savedInputs'))
+  );
 
   const addInput = () => {
     let arr = [...inputs];
@@ -99,16 +103,26 @@ const MainUI = () => {
     setOutputs(outputArr);
   };
 
+  const removeSavedInput = i => {
+    let arr = savedInputs.filter((cur, index) => index != i);
+    if (arr == []) {
+      setSavedInputs(null);
+      console.log('this ran');
+      return;
+    }
+    setSavedInputs(arr);
+    localStorage.setItem('savedInputs', JSON.stringify(arr));
+  };
+
   const saveInput = inp => {
-    let storage = window.localStorage;
-
-    let inputs = JSON.parse(localStorage.getItem('savedInputs'));
-
-    console.log(inputs);
-
-    let inputsArr = [...inputs, inp];
-    console.log(inputsArr);
-    localStorage.setItem('savedInputs', JSON.stringify(inputsArr));
+    if (savedInputs) {
+      let newArr = [...savedInputs, inp];
+      setSavedInputs(newArr);
+      localStorage.setItem('savedInputs', JSON.stringify(newArr));
+    } else {
+      setSavedInputs([inp]);
+      localStorage.setItem('savedInputs', JSON.stringify([inp]));
+    }
   };
 
   return (
@@ -156,46 +170,73 @@ const MainUI = () => {
           />
         )}
       </div>
-      <div className="main-ui__input">
-        <div className="main-ui__textbox main-ui__inputbox">
-          <div className="main-ui__textbox__label">Input Format</div>
-          <div className="main-ui__textbox-wrapper">
+      <div className="main-ui__input-wrapper">
+        <div className="main-ui__input">
+          <div className="main-ui__textbox main-ui__inputbox">
+            <div className="main-ui__textbox__label">Input Format</div>
+            <div className="main-ui__textbox-wrapper">
+              <textarea
+                type="text"
+                className="main-ui__textinput main-ui__inputbox__input"
+              />
+              <button
+                className="main-ui__saveinput"
+                onClick={() => {
+                  saveInput(
+                    document.querySelector('.main-ui__inputbox__input').value
+                  );
+                }}
+              >
+                <SaveOutlined />
+              </button>
+            </div>
+          </div>
+
+          <div className="main-ui__textbox main-ui__outputbox">
+            <div className="main-ui__textbox__label">Output Format</div>
             <textarea
               type="text"
-              className="main-ui__textinput main-ui__inputbox__input"
+              className="main-ui__textinput main-ui__outputbox__input"
             />
-            <button
-              className="main-ui__saveinput"
-              disabled={true}
-              onClick={() => {
-                saveInput(
-                  document.querySelector('.main-ui__inputbox__input').value
-                );
-              }}
-            >
-              <SaveOutlined />
-            </button>
           </div>
+          <button
+            className="main-ui__cta"
+            onClick={() => {
+              convert(
+                document.querySelector('.main-ui__inputbox__input').value,
+                document.querySelector('.main-ui__outputbox__input').value
+              );
+            }}
+          >
+            Convert!
+          </button>
         </div>
-
-        <div className="main-ui__textbox main-ui__outputbox">
-          <div className="main-ui__textbox__label">Output Format</div>
-          <textarea
-            type="text"
-            className="main-ui__textinput main-ui__outputbox__input"
-          />
-        </div>
-        <button
-          className="main-ui__cta"
-          onClick={() => {
-            convert(
-              document.querySelector('.main-ui__inputbox__input').value,
-              document.querySelector('.main-ui__outputbox__input').value
-            );
-          }}
-        >
-          Convert!
-        </button>
+        {savedInputs != null && savedInputs[0] && (
+          <>
+            <div className="main-ui__savedinputs">
+              <div className="main-ui__title">Saved Inputs</div>
+              {savedInputs !== null &&
+                savedInputs.map((cur, i) => (
+                  <div key={i} className="main-ui__savedinputs-wrapper">
+                    <div
+                      className="main-ui__savedinput"
+                      onClick={e => {
+                        e.target;
+                        document.querySelector(
+                          '.main-ui__inputbox__input'
+                        ).value = cur;
+                      }}
+                    >
+                      <p>{cur}</p>
+                    </div>
+                    <button onClick={() => removeSavedInput(i)}>
+                      <CloseOutlined />
+                    </button>
+                  </div>
+                ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
