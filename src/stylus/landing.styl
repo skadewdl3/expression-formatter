@@ -1,0 +1,89 @@
+.landing
+  width 100%
+  height 100vh
+  background linear-gradient(to right bottom, #38ada9, #78e08f)
+  padding 0 10rem
+
+.main-ui
+  display flex
+  justify-content space-between
+  width 100%
+  height 80vh
+  &__cta
+    padding 1rem 2rem
+    font-size 1.6rem
+    border-radius 0.5rem
+    background #1dd1a1
+    color #fff
+    font-weight 700
+  &__section
+    width 100%
+    background #fff
+    margin 0 1rem
+    margin-left 0
+    border-radius 1rem
+    overflow hidden
+  &__input
+    min-width 40rem
+    padding 1rem 2rem
+    background #fff
+    border-radius 1rem
+    height 30rem
+  &__textinput
+    width 100%
+    background #eee
+    border-radius .5rem
+    padding 0.5rem 1rem
+    font-size 1.6rem
+    resize none
+
+.main-ui
+  &__saveinput
+    padding 1.4rem
+    margin-left 0.5rem
+    background transparent
+    cursor pointer
+    transition all .2s ease-out
+    font-size 1.6rem
+    height 100%
+    &:hover
+      background #eee
+    &:active
+      background #ccc
+  &__textbox
+    width 100%
+    margin 1rem auto
+    &-wrapper
+      display flex
+      align-items center
+      justify-content space-between
+    &__label
+      font-size 1.6rem
+      font-weight 700
+      margin .5rem 0
+  &__controls
+    width 100%
+    height 4rem
+    background #eee
+    display flex
+    justify-content space-between
+    align-items center
+    &__left, &__right
+      display flex
+    &__btn
+      padding 1rem
+      font-size 1.6rem
+      &:last-child
+        border-top-right-radius 3rem
+    &__tab
+      display flex
+      align-items center
+      justify-content space-between
+      padding 1rem 2rem
+      font-size 1.6rem
+      cursor pointer
+      font-weight 700
+      &:first-child
+        border-top-left-radius 1rem
+      &--icon
+        margin-right 0.5rem

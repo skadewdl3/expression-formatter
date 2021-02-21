@@ -1,0 +1,32 @@
+{
+  "name": "expression-formatter",
+  "version": "1.0.0",
+  "description": "Regex-style formatter with GUI to format expressions like references",
+  "main": "index.js",
+  "author": "Soham K",
+  "license": "MIT",
+  "dependencies": {
+    "@ant-design/icons": "^4.5.0",
+    "@babel/core": "^7.12.17",
+    "@babel/preset-env": "^7.12.17",
+    "@babel/preset-react": "^7.12.13",
+    "antd": "^4.12.3",
+    "babel-loader": "^8.2.2",
+    "babel-polyfill": "^6.26.0",
+    "css-loader": "^5.0.2",
+    "file-loader": "^6.2.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-hot-loader": "^4.13.0",
+    "style-loader": "^2.0.0",
+    "stylus": "^0.54.8",
+    "stylus-loader": "^5.0.0",
+    "webpack": "^5.23.0",
+    "webpack-cli": "^3",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --open",
+    "build": "webpack --mode production"
+  }
+}

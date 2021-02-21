@@ -1,0 +1,57 @@
+.input
+  width 100%
+  height 100%
+  background #fff
+  display flex
+  flex-direction column
+
+  &__textbox
+    width 100%
+    display flex
+    align-items center
+    justify-content space-between
+    padding 1rem 2rem
+
+    &__remove
+      padding 0.5rem
+      background transparent
+      cursor pointer
+      transition all .2s ease-out
+      font-size 1.6rem
+      &:hover, &:active
+        background #eee
+
+    input
+      width 90%
+      border solid 1px transparent
+      transition all .2s ease-out
+      padding 0.7rem
+      font-size 1.6rem
+      &:active, &:focus, &:hover
+        border solid 1px #1dd1a1
+
+.output
+  width 100%
+  height 100%
+  background #fff
+  display flex
+  flex-direction column
+
+  &__text
+    font-size 1.6rem
+    padding 1rem 2rem
+    transition all .2s ease-out
+    display flex
+    align-items center
+    justify-content space-between
+
+    &__copy
+      padding 0.5rem
+      background transparent
+      cursor pointer
+      transition all .2s ease-out
+      font-size 1.6rem
+      &:hover
+        background #eee
+      &:active
+        background #ccc
