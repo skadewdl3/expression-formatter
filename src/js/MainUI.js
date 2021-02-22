@@ -18,7 +18,9 @@ const MainUI = () => {
     JSON.parse(window.localStorage.getItem('savedInputs'))
   );
   const [savedOutputs, setSavedOutputs] = useState(
-    JSON.parse(window.localStorage.getItem('savedOutputs'))
+    JSON.parse(window.localStorage.getItem('savedOutputs')) != null
+      ? JSON.parse(window.localStorage.getItem('savedOutputs'))
+      : []
   );
   const [formatType, setFormatType] = useState('input');
 
