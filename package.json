@@ -19,6 +19,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-hot-loader": "^4.13.0",
+    "react-router-dom": "^5.2.0",
     "style-loader": "^2.0.0",
     "stylus": "^0.54.8",
     "stylus-loader": "^5.0.0",

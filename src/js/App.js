@@ -1,16 +1,25 @@
 import React from 'react';
+import { HashRouter, Route } from 'react-router-dom';
 
 import Navbar from './Navbar';
 import MainUI from './MainUI';
+import Help from './Help';
 
 const App = () => {
   return (
-    <>
-      <div className="landing">
-        <Navbar />
-        <MainUI />
-      </div>
-    </>
+    <HashRouter>
+      <Route
+        exact
+        path="/"
+        render={() => (
+          <div className="landing">
+            <Navbar page="home" />
+            <MainUI />
+          </div>
+        )}
+      />
+      <Route path="/help" component={Help} />
+    </HashRouter>
   );
 };
 
