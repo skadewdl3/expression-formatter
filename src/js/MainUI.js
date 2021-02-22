@@ -17,6 +17,10 @@ const MainUI = () => {
   const [savedInputs, setSavedInputs] = useState(
     JSON.parse(window.localStorage.getItem('savedInputs'))
   );
+  const [savedOutputs, setSavedOutputs] = useState(
+    JSON.parse(window.localStorage.getItem('savedOutputs'))
+  );
+  const [formatType, setFormatType] = useState('input');
 
   const addInput = () => {
     let arr = [...inputs];
@@ -101,27 +105,53 @@ const MainUI = () => {
     });
     console.log(outputArr);
     setOutputs(outputArr);
+    setTab('output');
   };
 
-  const removeSavedInput = i => {
-    let arr = savedInputs.filter((cur, index) => index != i);
+  const removeSavedFormat = (i, type) => {
+    let arr = (type === 'input' ? savedInputs : savedOutputs).filter(
+      (cur, index) => index != i
+    );
     if (arr == []) {
-      setSavedInputs(null);
+      if (type === 'input') {
+        setSavedInputs(null);
+      } else {
+        setSavedOutputs(null);
+      }
       console.log('this ran');
       return;
     }
-    setSavedInputs(arr);
-    localStorage.setItem('savedInputs', JSON.stringify(arr));
+    if (type === 'input') {
+      setSavedInputs(arr);
+    } else {
+      setSavedOutputs(arr);
+    }
+    localStorage.setItem(
+      `saved${type === 'input' ? 'Inputs' : 'Outputs'}`,
+      JSON.stringify(arr)
+    );
   };
 
-  const saveInput = inp => {
-    if (savedInputs) {
-      let newArr = [...savedInputs, inp];
-      setSavedInputs(newArr);
-      localStorage.setItem('savedInputs', JSON.stringify(newArr));
+  const saveFormat = (inp, type) => {
+    if (savedInputs || savedOutputs) {
+      let newArr = [
+        ...(formatType == 'input' ? savedInputs : savedOutputs),
+        inp,
+      ];
+      if (type === 'input') {
+        setSavedInputs(newArr);
+      } else {
+        setSavedOutputs(newArr);
+      }
+      localStorage.setItem(
+        `saved${type === 'input' ? 'Inputs' : 'Outputs'}`,
+        JSON.stringify(newArr)
+      );
     } else {
-      setSavedInputs([inp]);
-      localStorage.setItem('savedInputs', JSON.stringify([inp]));
+      localStorage.setItem(
+        `saved${type === 'input' ? 'Inputs' : 'Outputs'}`,
+        JSON.stringify([inp])
+      );
     }
   };
 
@@ -155,8 +185,9 @@ const MainUI = () => {
             <button
               className="main-ui__controls__btn"
               onClick={() => addInput()}
+              title="Add Input"
             >
-              <PlusOutlined />
+              <PlusOutlined title="Add Input" />
             </button>
           </div>
         </div>
@@ -182,22 +213,38 @@ const MainUI = () => {
               <button
                 className="main-ui__saveinput"
                 onClick={() => {
-                  saveInput(
-                    document.querySelector('.main-ui__inputbox__input').value
+                  saveFormat(
+                    document.querySelector('.main-ui__inputbox__input').value,
+                    'input'
                   );
                 }}
+                title="Save Input Format"
               >
-                <SaveOutlined />
+                <SaveOutlined title="Save Input Format" />
               </button>
             </div>
           </div>
 
           <div className="main-ui__textbox main-ui__outputbox">
             <div className="main-ui__textbox__label">Output Format</div>
-            <textarea
-              type="text"
-              className="main-ui__textinput main-ui__outputbox__input"
-            />
+            <div className="main-ui__textbox-wrapper">
+              <textarea
+                type="text"
+                className="main-ui__textinput main-ui__outputbox__input"
+              />
+              <button
+                className="main-ui__saveinput"
+                onClick={() => {
+                  saveFormat(
+                    document.querySelector('.main-ui__outputbox__input').value,
+                    'output'
+                  );
+                }}
+                title="Save Output Format"
+              >
+                <SaveOutlined title="Save Output Format" />
+              </button>
+            </div>
           </div>
           <button
             className="main-ui__cta"
@@ -211,32 +258,76 @@ const MainUI = () => {
             Convert!
           </button>
         </div>
-        {savedInputs != null && savedInputs[0] && (
-          <>
-            <div className="main-ui__savedinputs">
-              <div className="main-ui__title">Saved Inputs</div>
-              {savedInputs !== null &&
-                savedInputs.map((cur, i) => (
-                  <div key={i} className="main-ui__savedinputs-wrapper">
-                    <div
-                      className="main-ui__savedinput"
-                      onClick={e => {
-                        e.target;
-                        document.querySelector(
-                          '.main-ui__inputbox__input'
-                        ).value = cur;
-                      }}
-                    >
-                      <p>{cur}</p>
+        <div className="main-ui__savedinputs">
+          <div className="main-ui__title">Saved Formats</div>
+          <div className="main-ui__formattype">
+            <span
+              className={`main-ui__formattype__option ${
+                formatType === 'input'
+                  ? 'main-ui__formattype__option--active'
+                  : ''
+              }`}
+              onClick={() => {
+                setFormatType('input');
+                console.log(savedInputs);
+              }}
+            >
+              Input
+            </span>
+            <span
+              className={`main-ui__formattype__option ${
+                formatType === 'output'
+                  ? 'main-ui__formattype__option--active'
+                  : ''
+              }`}
+              onClick={() => {
+                setFormatType('output');
+                console.log(savedOutputs);
+              }}
+            >
+              Output
+            </span>
+          </div>
+          <div className="main-ui__savedformatdisplay">
+            {!(formatType == 'input' ? savedInputs : savedOutputs)[0] ? (
+              <p className="main-ui__savedformatdisplay__message">
+                No saved {formatType} formats.
+              </p>
+            ) : (
+              (formatType === 'input'
+                ? savedInputs == null
+                  ? []
+                  : savedInputs
+                : savedOutputs == null
+                ? []
+                : savedOutputs
+              ).map((cur, i, arr) => (
+                <>
+                  {!arr[0] ? (
+                    <span>No saved {formatType} formats.</span>
+                  ) : (
+                    <div key={i} className="main-ui__savedinputs-wrapper">
+                      <div
+                        className="main-ui__savedinput"
+                        onClick={e => {
+                          e.target;
+                          document.querySelector(
+                            `.main-ui__${formatType}box__input`
+                          ).value = cur;
+                        }}
+                      >
+                        <p>{cur}</p>
+                      </div>
+                      <button onClick={() => removeSavedFormat(i, formatType)}>
+                        <CloseOutlined />
+                      </button>
                     </div>
-                    <button onClick={() => removeSavedInput(i)}>
-                      <CloseOutlined />
-                    </button>
-                  </div>
-                ))}
-            </div>
-          </>
-        )}
+                  )}
+                </>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

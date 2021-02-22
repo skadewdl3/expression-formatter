@@ -11,6 +11,12 @@
   height 80vh
   &__cta
     padding 1rem 2rem
+    cursor pointer
+    transform-origin 50% 50%
+    transition all .2s ease-out
+    &:active
+      transform scale(0.9)
+
     font-size 1.6rem
     border-radius 0.5rem
     background #1dd1a1
@@ -38,10 +44,25 @@
     resize none
 
 .main-ui
-  &__title
+  &__savedformatdisplay
+    &__message
+      font-size 1.6rem
+      margin 1rem 0
+  &__formattype__option
     font-size 1.6rem
+    color #636e72
+    cursor pointer
+    &:last-child
+      margin-left 1rem
+    &--active
+      font-weight bold
+      color #000
+
+  &__title
+    font-size 2rem
     font-weight bold
     margin-top 1rem
+    margin-bottom 1rem
   &__savedinputs
     background #fff
     padding 1rem
@@ -55,6 +76,8 @@
         cursor pointer
         padding 1rem
         font-size 1.6rem
+        margin-left 1rem
+        border-radius .5rem
   &__savedinput
     background #eee
     padding 1rem
