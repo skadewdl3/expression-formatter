@@ -81,6 +81,7 @@ const MainUI = () => {
         console.log(str);
         let cat = str.split(cur)[0];
         str = str.replace(`${cat}${cur}`, '');
+
         strArr.push(cat);
         if (i === delims.length - 1) strArr.push(str);
       });
@@ -102,11 +103,65 @@ const MainUI = () => {
 
       str = '';
       catsOut.forEach((cur, i) => {
-        str = `${str}${strObj[cur]}${delimsOut[i] ? delimsOut[i] : ''}`;
+        let newCat = '';
+        let operators = [];
+        let temp = cur.split(/[()]/);
+        if (temp.length == 1) {
+          newCat = cur;
+        } else {
+          newCat = cur.split(')')[1];
+          operators = [...temp[1].split(',')];
+        }
+        let newStr = strObj[newCat];
+        console.log(operators);
+
+        // handle bold, italic, underline
+        let tags = [];
+        if (operators[0]) {
+          let textOperators = operators[0].split('');
+          if (textOperators.includes('*')) {
+            tags.push('b');
+          }
+          if (textOperators.includes('_')) {
+            tags.push('u');
+          }
+          if (textOperators.includes('/')) {
+            tags.push('i');
+          }
+        }
+
+        if (operators[1] && operators[1].trim() != '') {
+          newStr = newStr.slice(0, operators[1]);
+        }
+
+        if (operators[2] && operators[2].trim() != '') {
+          newStr = newStr
+            .split('')
+            .slice(
+              newStr.split('').length - operators[2],
+              newStr.split('').length
+            )
+            .join('');
+        }
+
+        tags.forEach((cur, ind) => {
+          if (ind === tags.length - 1) {
+            newStr = `<${cur}>${newStr}</${cur}>${
+              delimsOut[i] ? delimsOut[i] : ''
+            }`;
+          } else {
+            newStr = `<${cur}>${newStr}</${cur}>`;
+          }
+        });
+
+        if (tags.length == 0) {
+          newStr = `${newStr}${delimsOut[i] ? delimsOut[i] : ''}`;
+        }
+        str = `<span>${str}${newStr}</span>`;
       });
 
       console.log('Final: ', str);
-      outputArr.push(str);
+      outputArr.push(`<div>${str}</div>`);
     });
     console.log(outputArr);
     setOutputs(outputArr);
