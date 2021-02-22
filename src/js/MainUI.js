@@ -77,10 +77,25 @@ const MainUI = () => {
       let str = '';
       let strArr = [];
       delims.forEach((cur, i) => {
+        let brk = '';
+        let dels = [];
         if (i === 0) str = selection.content;
+        console.log(cur);
+        if (cur.split('')[0] == '(') {
+          dels = cur.split(/[()]/)[1].split('');
+          console.log('dels: ', dels);
+        } else {
+          brk = cur;
+        }
         console.log(str);
-        let cat = str.split(cur)[0];
-        str = str.replace(`${cat}${cur}`, '');
+        dels.forEach(del => {
+          if (str.split('').includes(del)) {
+            brk = del;
+            return;
+          }
+        });
+        let cat = str.split(brk)[0];
+        str = str.replace(`${cat}${brk}`, '');
 
         strArr.push(cat);
         if (i === delims.length - 1) strArr.push(str);
