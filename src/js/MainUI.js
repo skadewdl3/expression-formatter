@@ -15,8 +15,11 @@ const MainUI = () => {
   const [inputs, setInputs] = useState([]);
   const [outputs, setOutputs] = useState([]);
   const [savedInputs, setSavedInputs] = useState(
-    JSON.parse(window.localStorage.getItem('savedInputs'))
+    JSON.parse(window.localStorage.getItem('savedInputs')) != null
+      ? JSON.parse(window.localStorage.getItem('savedInputs'))
+      : []
   );
+
   const [savedOutputs, setSavedOutputs] = useState(
     JSON.parse(window.localStorage.getItem('savedOutputs')) != null
       ? JSON.parse(window.localStorage.getItem('savedOutputs'))
