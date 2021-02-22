@@ -91,6 +91,28 @@ const Help = () => {
             </span>
             <br />
           </li>
+
+          <div className="divider-invisible"></div>
+
+          <li style={{ listStyle: 'none' }}>
+            <strong className="subheading">
+              %category1% (-:) %category2% : Switch Case Punctuation
+            </strong>
+            <br />
+            <br />
+            <span className="text">
+              Sometimes there can be punctuation inconsistencies in the input
+              text. Using the switch case punctuation declaration, you can deal
+              with such inconsistencies. This delcaration must be used between
+              two category declarations only. All the punctuations that may
+              appear between the categories are to be included without space
+              inside the parantheses. Note that if apces occur before the
+              punctuation mark sin the input, enter then outside the
+              parantheses. There must be no spaces inside the paranthese in any
+              case.
+            </span>
+            <br />
+          </li>
         </ol>
         <div className="divider-invisible"></div>
         <span className="heading">Saving Formats</span>
