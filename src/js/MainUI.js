@@ -9,6 +9,7 @@ import {
 
 import Output from './Output';
 import Input from './Input';
+import FormatSaver from './FormatSaver';
 
 const MainUI = () => {
   const [tab, setTab] = useState('input');
@@ -19,6 +20,7 @@ const MainUI = () => {
       ? JSON.parse(window.localStorage.getItem('savedInputs'))
       : []
   );
+  const [saver, setSaver] = useState(null);
 
   const [savedOutputs, setSavedOutputs] = useState(
     JSON.parse(window.localStorage.getItem('savedOutputs')) != null
@@ -207,16 +209,18 @@ const MainUI = () => {
     );
   };
 
-  const saveFormat = (inp, type) => {
+  const saveFormat = (name, inp, type) => {
     if (savedInputs || savedOutputs) {
       let newArr = [
-        ...(formatType == 'input' ? savedInputs : savedOutputs),
-        inp,
+        ...(type == 'input' ? savedInputs : savedOutputs),
+        { name, format: inp },
       ];
       if (type === 'input') {
         setSavedInputs(newArr);
+        console.log(newArr);
       } else {
         setSavedOutputs(newArr);
+        console.log(newArr);
       }
       localStorage.setItem(
         `saved${type === 'input' ? 'Inputs' : 'Outputs'}`,
@@ -225,186 +229,206 @@ const MainUI = () => {
     } else {
       localStorage.setItem(
         `saved${type === 'input' ? 'Inputs' : 'Outputs'}`,
-        JSON.stringify([inp])
+        JSON.stringify([{ name, format: inp }])
       );
+      console.log(newArr);
     }
   };
 
-  return (
-    <div className="main-ui">
-      <div className="main-ui__section">
-        <div className="main-ui__controls">
-          <div className="main-ui__controls__left">
-            <button
-              className="main-ui__controls__tab"
-              onClick={() => setTab('input')}
-              style={{ background: tab === 'input' ? '#fff' : '#eee' }}
-            >
-              <div className="main-ui__controls__tab--icon">
-                <ApartmentOutlined />
-              </div>
-              <div className="main-ui__controls__tab--name">Input</div>
-            </button>
-            <button
-              className="main-ui__controls__tab"
-              style={{ background: tab === 'output' ? '#fff' : '#eee' }}
-              onClick={() => setTab('output')}
-            >
-              <div className="main-ui__controls__tab--icon">
-                <FormatPainterOutlined />
-              </div>
-              <div className="main-ui__controls__tab--name">Output</div>
-            </button>
-          </div>
-          <div className="main-ui__controls__right">
-            <button
-              className="main-ui__controls__btn"
-              onClick={() => addInput()}
-              title="Add Input"
-            >
-              <PlusOutlined title="Add Input" />
-            </button>
-          </div>
-        </div>
-        {tab === 'output' ? (
-          <Output outputs={outputs} />
-        ) : (
-          <Input
-            removeInput={removeInput}
-            updateInput={updateInput}
-            inputs={inputs}
-          />
-        )}
-      </div>
-      <div className="main-ui__input-wrapper">
-        <div className="main-ui__input">
-          <div className="main-ui__textbox main-ui__inputbox">
-            <div className="main-ui__textbox__label">Input Format</div>
-            <div className="main-ui__textbox-wrapper">
-              <textarea
-                type="text"
-                className="main-ui__textinput main-ui__inputbox__input"
-              />
-              <button
-                className="main-ui__saveinput"
-                onClick={() => {
-                  saveFormat(
-                    document.querySelector('.main-ui__inputbox__input').value,
-                    'input'
-                  );
-                }}
-                title="Save Input Format"
-              >
-                <SaveOutlined title="Save Input Format" />
-              </button>
-            </div>
-          </div>
+  const openSaver = type => {
+    if (type === 'input') {
+      setSaver('input');
+    } else if (type === 'output') {
+      setSaver('output');
+    }
+  };
 
-          <div className="main-ui__textbox main-ui__outputbox">
-            <div className="main-ui__textbox__label">Output Format</div>
-            <div className="main-ui__textbox-wrapper">
-              <textarea
-                type="text"
-                className="main-ui__textinput main-ui__outputbox__input"
-              />
+  const closeSaver = () => {
+    setSaver(null);
+  };
+
+  return (
+    <>
+      {saver != null && (
+        <FormatSaver
+          content={document.querySelector(`.main-ui__${saver}box__input`).value}
+          saver={saver}
+          callback={saveFormat}
+          closeSaver={closeSaver}
+        />
+      )}
+      <div className="main-ui">
+        <div className="main-ui__section">
+          <div className="main-ui__controls">
+            <div className="main-ui__controls__left">
               <button
-                className="main-ui__saveinput"
-                onClick={() => {
-                  saveFormat(
-                    document.querySelector('.main-ui__outputbox__input').value,
-                    'output'
-                  );
-                }}
-                title="Save Output Format"
+                className="main-ui__controls__tab"
+                onClick={() => setTab('input')}
+                style={{ background: tab === 'input' ? '#fff' : '#eee' }}
               >
-                <SaveOutlined title="Save Output Format" />
+                <div className="main-ui__controls__tab--icon">
+                  <ApartmentOutlined />
+                </div>
+                <div className="main-ui__controls__tab--name">Input</div>
+              </button>
+              <button
+                className="main-ui__controls__tab"
+                style={{ background: tab === 'output' ? '#fff' : '#eee' }}
+                onClick={() => setTab('output')}
+              >
+                <div className="main-ui__controls__tab--icon">
+                  <FormatPainterOutlined />
+                </div>
+                <div className="main-ui__controls__tab--name">Output</div>
+              </button>
+            </div>
+            <div className="main-ui__controls__right">
+              <button
+                className="main-ui__controls__btn"
+                onClick={() => addInput()}
+                title="Add Input"
+              >
+                <PlusOutlined title="Add Input" />
               </button>
             </div>
           </div>
-          <button
-            className="main-ui__cta"
-            onClick={() => {
-              convert(
-                document.querySelector('.main-ui__inputbox__input').value,
-                document.querySelector('.main-ui__outputbox__input').value
-              );
-            }}
-          >
-            Convert!
-          </button>
+          {tab === 'output' ? (
+            <Output outputs={outputs} />
+          ) : (
+            <Input
+              removeInput={removeInput}
+              updateInput={updateInput}
+              inputs={inputs}
+            />
+          )}
         </div>
-        <div className="main-ui__savedinputs">
-          <div className="main-ui__title">Saved Formats</div>
-          <div className="main-ui__formattype">
-            <span
-              className={`main-ui__formattype__option ${
-                formatType === 'input'
-                  ? 'main-ui__formattype__option--active'
-                  : ''
-              }`}
+        <div className="main-ui__input-wrapper">
+          <div className="main-ui__input">
+            <div className="main-ui__textbox main-ui__inputbox">
+              <div className="main-ui__textbox__label">Input Format</div>
+              <div className="main-ui__textbox-wrapper">
+                <textarea
+                  type="text"
+                  className="main-ui__textinput main-ui__inputbox__input"
+                />
+                <button
+                  className="main-ui__saveinput"
+                  onClick={() => {
+                    openSaver('input');
+                  }}
+                  title="Save Input Format"
+                >
+                  <SaveOutlined title="Save Input Format" />
+                </button>
+              </div>
+            </div>
+
+            <div className="main-ui__textbox main-ui__outputbox">
+              <div className="main-ui__textbox__label">Output Format</div>
+              <div className="main-ui__textbox-wrapper">
+                <textarea
+                  type="text"
+                  className="main-ui__textinput main-ui__outputbox__input"
+                />
+                <button
+                  className="main-ui__saveinput"
+                  onClick={() => {
+                    openSaver('output');
+                  }}
+                  title="Save Output Format"
+                >
+                  <SaveOutlined title="Save Output Format" />
+                </button>
+              </div>
+            </div>
+            <button
+              className="main-ui__cta"
               onClick={() => {
-                setFormatType('input');
-                console.log(savedInputs);
+                convert(
+                  document.querySelector('.main-ui__inputbox__input').value,
+                  document.querySelector('.main-ui__outputbox__input').value
+                );
               }}
             >
-              Input
-            </span>
-            <span
-              className={`main-ui__formattype__option ${
-                formatType === 'output'
-                  ? 'main-ui__formattype__option--active'
-                  : ''
-              }`}
-              onClick={() => {
-                setFormatType('output');
-                console.log(savedOutputs);
-              }}
-            >
-              Output
-            </span>
+              Convert!
+            </button>
           </div>
-          <div className="main-ui__savedformatdisplay">
-            {!(formatType == 'input' ? savedInputs : savedOutputs)[0] ? (
-              <p className="main-ui__savedformatdisplay__message">
-                No saved {formatType} formats.
-              </p>
-            ) : (
-              (formatType === 'input'
-                ? savedInputs == null
+          <div className="main-ui__savedinputs">
+            <div className="main-ui__title">Saved Formats</div>
+            <div className="main-ui__formattype">
+              <span
+                className={`main-ui__formattype__option ${
+                  formatType === 'input'
+                    ? 'main-ui__formattype__option--active'
+                    : ''
+                }`}
+                onClick={() => {
+                  setFormatType('input');
+                  console.log(savedInputs);
+                }}
+              >
+                Input
+              </span>
+              <span
+                className={`main-ui__formattype__option ${
+                  formatType === 'output'
+                    ? 'main-ui__formattype__option--active'
+                    : ''
+                }`}
+                onClick={() => {
+                  setFormatType('output');
+                  console.log(savedOutputs);
+                }}
+              >
+                Output
+              </span>
+            </div>
+            <div className="main-ui__savedformatdisplay">
+              {!(formatType == 'input' ? savedInputs : savedOutputs)[0] ? (
+                <p className="main-ui__savedformatdisplay__message">
+                  No saved {formatType} formats.
+                </p>
+              ) : (
+                (formatType === 'input'
+                  ? savedInputs == null
+                    ? []
+                    : savedInputs
+                  : savedOutputs == null
                   ? []
-                  : savedInputs
-                : savedOutputs == null
-                ? []
-                : savedOutputs
-              ).map((cur, i, arr) => (
-                <>
-                  {!arr[0] ? (
-                    <span>No saved {formatType} formats.</span>
-                  ) : (
-                    <div key={i} className="main-ui__savedinputs-wrapper">
-                      <div
-                        className="main-ui__savedinput"
-                        onClick={e => {
-                          e.target;
-                          document.querySelector(
-                            `.main-ui__${formatType}box__input`
-                          ).value = cur;
-                        }}
-                      >
-                        <p>{cur}</p>
+                  : savedOutputs
+                ).map((cur, i, arr) => (
+                  <>
+                    {!arr[0] ? (
+                      <span>No saved {formatType} formats.</span>
+                    ) : (
+                      <div key={i} className="main-ui__savedinputs-wrapper">
+                        <div
+                          className="main-ui__savedinput"
+                          onClick={e => {
+                            e.target;
+                            document.querySelector(
+                              `.main-ui__${formatType}box__input`
+                            ).value = typeof cur == 'object' ? cur.format : cur;
+                          }}
+                        >
+                          <p>{typeof cur == 'object' ? cur.name : ''}</p>
+                          <p>{typeof cur == 'object' ? cur.format : cur}</p>
+                        </div>
+                        <button
+                          onClick={() => removeSavedFormat(i, formatType)}
+                        >
+                          <CloseOutlined />
+                        </button>
                       </div>
-                      <button onClick={() => removeSavedFormat(i, formatType)}>
-                        <CloseOutlined />
-                      </button>
-                    </div>
-                  )}
-                </>
-              ))
-            )}
+                    )}
+                  </>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
