@@ -2,7 +2,24 @@ import React from 'react';
 
 const FormatSaver = ({ content, callback, closeSaver, saver }) => {
   return (
-    <div className="format-saver">
+    <div
+      className="format-saver"
+      onClick={e => {
+        console.log(e.target);
+        let a = e.target;
+        let els = [];
+        while (a) {
+          els = [
+            ...els,
+            ...(a.classList != undefined ? Array.from(a.classList) : []),
+          ];
+          a = a.parentNode;
+        }
+        console.log(els);
+        if (els.includes('format-saver__content')) return;
+        closeSaver();
+      }}
+    >
       <div className="format-saver__content">
         <div className="format-saver__title">Save {saver} Format</div>
         <input
@@ -18,6 +35,11 @@ const FormatSaver = ({ content, callback, closeSaver, saver }) => {
         />
         <button
           onClick={() => {
+            if (
+              document.querySelector('.format-saver__name').value == '' ||
+              document.querySelector('.format-saver__name').value == ''
+            )
+              return;
             callback(
               document.querySelector('.format-saver__name').value,
               document.querySelector('.format-saver__format').value,
